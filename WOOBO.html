@@ -1,0 +1,78 @@
+﻿<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>神祕小屋互動設計</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        #output {
+            font-size: 24px;
+            margin-top: 20px;
+        }
+
+        #response {
+            font-size: 20px;
+            color: green;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>歡迎來到神祕小屋</h1>
+    <p id="welcome-message">我是劉老師，你有甚麼問題都可以問我，我會給予你滿意的答案。</p>
+
+    <button id="start-recording">按住開始說話</button>
+    <div id="output">您說的話會顯示在這裡...</div>
+    <div id="response"></div>
+
+    <script>// 確認瀏覽器是否支持 Web Speech API
+        const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+        recognition.lang = 'zh-TW'; // 設定語言為中文（台灣）
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 1;
+
+        const startButton = document.getElementById('start-recording');
+        const outputDiv = document.getElementById('output');
+        const responseDiv = document.getElementById('response');
+
+        // 預設答案資料庫
+        const answers = [
+            "答案1：是的，你的問題很有趣。",
+            "答案2：這是一個值得思考的問題。",
+            "答案3：這需要進一步的研究。",
+            "答案4：我認為答案可能會超出你的想像。",
+            "答案5：或許答案在你心中已經存在。"
+        ];
+
+        // 開始語音辨識
+        startButton.addEventListener('mousedown', () => {
+            recognition.start();
+        });
+
+        // 當語音辨識成功時
+        recognition.addEventListener('result', (event) => {
+            const transcript = event.results[0][0].transcript;
+            outputDiv.textContent = `您剛剛說: "${transcript}"`;
+
+            // 隨機選擇一個答案
+            const randomAnswer = answers[Math.floor(Math.random() * answers.length)];
+            responseDiv.textContent = `劉老師回覆: ${randomAnswer}`;
+
+            // 語音播放AI回應
+            const synth = window.speechSynthesis;
+            const utterThis = new SpeechSynthesisUtterance(randomAnswer);
+            synth.speak(utterThis);
+        });
+
+        // 當語音辨識結束
+        recognition.addEventListener('end', () => {
+            recognition.stop();
+        });</script>
+</body>
+</html>
